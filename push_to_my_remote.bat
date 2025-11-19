@@ -11,7 +11,7 @@ git pull %REMOTE_NAME% %LOCAL_BRANCH%
 
 :: 检查是否有变更
 git status
-set /p "COMMIT_MSG=请输入提交信息: "
+set /p "COMMIT_MSG=commit msg: "
 
 :: 提交变更
 git add .
