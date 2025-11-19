@@ -21,6 +21,6 @@ git commit -m "!COMMIT_MSG!"
 echo pushing %REMOTE_NAME%/%LOCAL_BRANCH%...
 git push %REMOTE_NAME% %LOCAL_BRANCH%
 
-echo complete
+echo complete.............
 endlocal
-pause
+
