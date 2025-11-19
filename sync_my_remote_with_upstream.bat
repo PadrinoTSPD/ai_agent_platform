@@ -1,33 +1,45 @@
 @echo off
-setlocal
 
-:: 配置仓库信息
-set "UPSTREAM_NAME=upstream"  :: 原主仓库的远程名
-set "UPSTREAM_REPO=https://github.com/HuxJiang/ai_agent_platform"
-set "MY_REMOTE=origin"        :: 自己 fork 仓库的远程名
-set "MY_BRANCH=feature/yangyuchen"
-set "UPSTREAM_BRANCH=main"
+call "%~dp0load_env.bat" || exit /b 1
 
-:: 检查是否已添加原主仓库远程
-git remote | findstr /i "%UPSTREAM_NAME%" >nul
+set "REMOTE_NAME=origin"
+set "UPSTREAM_NAME=upstream"
+
+echo Syncing with upstream...
+echo Upstream: %UPSTREAM_REPO_URL% (%UPSTREAM_BRANCH_NAME%)
+echo My Repo: %MY_REPO_URL% (%MY_BRANCH_NAME%)
+
+:: Check and setup upstream remote
+git remote get-url %UPSTREAM_NAME% >nul 2>&1
 if %errorlevel% neq 0 (
-    echo 添加原主仓库远程...
-    git remote add %UPSTREAM_NAME% %UPSTREAM_REPO%
+    git remote add %UPSTREAM_NAME% %UPSTREAM_REPO_URL%
 )
 
-:: 拉取原主仓库最新代码
-echo 拉取原主仓库最新代码...
+:: Fetch from upstream
 git fetch %UPSTREAM_NAME%
+if %errorlevel% neq 0 (
+    echo Error: Fetch from upstream failed
+    pause
+    exit /b 1
+)
 
-:: 合并到本地分支
-echo 合并原主仓库代码到本地分支...
-git checkout %MY_BRANCH%
-git merge %UPSTREAM_NAME%/%UPSTREAM_BRANCH%
+:: Switch to branch and merge
+git checkout %MY_BRANCH_NAME%
+git merge %UPSTREAM_NAME%/%UPSTREAM_BRANCH_NAME%
+if %errorlevel% neq 0 (
+    echo Error: Merge conflict
+    git merge --abort >nul 2>&1
+    pause
+    exit /b 1
+)
 
-:: 推送到自己的远程仓库
-echo 推送到自己的远程仓库...
-git push %MY_REMOTE% %MY_BRANCH%
+:: Push to my remote
+git push %REMOTE_NAME% %MY_BRANCH_NAME%
+if %errorlevel% neq 0 (
+    echo Error: Push failed
+    pause
+    exit /b 1
+)
 
-echo 同步完成！
-endlocal
+echo Success: Synced with upstream
 pause

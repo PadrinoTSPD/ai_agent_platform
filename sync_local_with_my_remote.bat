@@ -1,15 +1,33 @@
 @echo off
-setlocal
 
-:: 配置仓库信息
-set "LOCAL_BRANCH=feature/yangyuchen"
+call "%~dp0load_env.bat" || exit /b 1
+
 set "REMOTE_NAME=origin"
 
-echo 同步本地仓库与 %REMOTE_NAME%/%LOCAL_BRANCH%...
-git fetch %REMOTE_NAME%
-git checkout %LOCAL_BRANCH%
-git pull %REMOTE_NAME% %LOCAL_BRANCH%
+echo Syncing local with remote...
+echo Branch: %MY_BRANCH_NAME%
+echo Remote: %REMOTE_NAME%
 
-echo 同步完成！
-endlocal
+git fetch %REMOTE_NAME%
+if %errorlevel% neq 0 (
+    echo Error: git fetch failed
+    pause
+    exit /b 1
+)
+
+git checkout %MY_BRANCH_NAME%
+if %errorlevel% neq 0 (
+    echo Error: Cannot switch to branch %MY_BRANCH_NAME%
+    pause
+    exit /b 1
+)
+
+git pull %REMOTE_NAME% %MY_BRANCH_NAME%
+if %errorlevel% neq 0 (
+    echo Error: git pull failed
+    pause
+    exit /b 1
+)
+
+echo Success: Synced with %REMOTE_NAME%/%MY_BRANCH_NAME%
 pause
