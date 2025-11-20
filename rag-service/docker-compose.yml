@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  rag-service:
+    build: .
+    container_name: rag-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ../model:/app/model:ro
+    environment:
+      - RAG_MODEL_NAME=/app/model
+      - RAG_DB_HOST=mysql
+      - RAG_DB_PORT=3306
+      - RAG_DB_USER=root
+      - RAG_DB_PASS=root
+      - RAG_DB_NAME=mental_health
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: false
