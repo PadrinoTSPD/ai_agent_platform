@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10
 
 # 设置工作目录
 WORKDIR /app
@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 复制requirements.txt并安装Python依赖
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip setuptools && \
+    pip install --no-cache-dir -r requirements.txt
 
 # 复制RAG服务代码
 COPY . .

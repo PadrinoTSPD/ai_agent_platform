@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   rag-service:
     build: .
@@ -13,13 +11,36 @@ services:
       - RAG_MODEL_NAME=/app/model
       - RAG_DB_HOST=mysql
       - RAG_DB_PORT=3306
-      - RAG_DB_USER=root
-      - RAG_DB_PASS=root
-      - RAG_DB_NAME=mental_health
+      - RAG_DB_USER=demo_user
+      - RAG_DB_PASS=demo_pass_123
+      - RAG_DB_NAME=demo_db
     depends_on:
       - mysql
     networks:
       - app-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: rag-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=demo_db
+      - MYSQL_USER=demo_user
+      - MYSQL_PASSWORD=demo_pass_123
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
 
 networks:
   app-network:
