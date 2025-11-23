@@ -10,4 +10,4 @@ target/
 # 环境变量文件（实际值）
 .env
 rag-service/model/
-
+rag-service/data/kb
