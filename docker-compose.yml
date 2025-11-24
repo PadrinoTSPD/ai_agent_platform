@@ -20,7 +20,7 @@ services:
     ]
     volumes:
       - backend_mysql_data:/var/lib/mysql
-      - ./database/init:/docker-entrypoint-initdb.d
+      - ./backend/database/init:/docker-entrypoint-initdb.d
     networks:
       - app-network
     restart: unless-stopped
