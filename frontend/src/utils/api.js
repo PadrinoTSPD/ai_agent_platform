@@ -300,6 +300,74 @@ const agentAPI = {
   }
 }
 
+// 会话API
+const conversationAPI = {
+  /**
+   * 获取会话列表
+   */
+  async getConversationList(params = {}) {
+    try {
+      const response = await get('/conversation/get_conversation_list', params)
+      return response
+    } catch (error) {
+      console.error('获取会话列表失败:', error)
+      throw error
+    }
+  },
+  
+  /**
+   * 获取会话详情
+   */
+  async getConversation(conversationId) {
+    try {
+      const response = await get(`/conversation/get_conversation/${conversationId}`)
+      return response
+    } catch (error) {
+      console.error('获取会话详情失败:', error)
+      throw error
+    }
+  },
+  
+  /**
+   * 创建会话
+   */
+  async createConversation(data) {
+    try {
+      const response = await post('/conversation/create_conversation', data)
+      return response
+    } catch (error) {
+      console.error('创建会话失败:', error)
+      throw error
+    }
+  },
+  
+  /**
+   * 删除会话
+   */
+  async deleteConversation(conversationId) {
+    try {
+      const response = await del(`/conversation/delete_conversation/${conversationId}`)
+      return response
+    } catch (error) {
+      console.error('删除会话失败:', error)
+      throw error
+    }
+  },
+  
+  /**
+   * 获取消息历史
+   */
+  async getMessageHistory(conversationId, params = {}) {
+    try {
+      const response = await get(`/message/${conversationId}/history`, params)
+      return response
+    } catch (error) {
+      console.error('获取消息历史失败:', error)
+      throw error
+    }
+  }
+}
+
 // 导出API工具
 export default {
   get,
@@ -308,6 +376,7 @@ export default {
   delete: del,
   auth: authAPI,
   agent: agentAPI,
+  conversation: conversationAPI,
   getAccessToken,
   setAccessToken,
   removeAccessToken,
