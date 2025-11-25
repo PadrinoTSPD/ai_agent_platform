@@ -30,9 +30,13 @@
 
   ```shell
   git clone https://github.com/HuxJiang/ai_agent_platform.git
-  git checkout release
+  git checkout release //可选命令
   ```
-- 下载
+- 根据` .env.example`文件创建 `.env`文件；
+
+  ```
+  cp .env.example .env
+  ```
 
 后端docker镜像单独构建指令：
 
@@ -45,13 +49,13 @@ docker build -t ai-agent-backend:test .
 
 #### 部署
 
-一键部署启动指令：
+部署启动指令：
 
 ```
 docker-compose -f docker-compose.prod.yml -p ai-platform up -d --build
 ```
 
-开发环境一键配置指令：
+开发环境配置指令：
 
 ```
 docker-compose -f docker-compose.dev.yml -p ai-platform-dev up -d
