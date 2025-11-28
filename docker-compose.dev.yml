@@ -43,9 +43,9 @@ services:
         - RAG_ON_DOCKER=Y
         - RAG_DB_HOST=mysql
         - RAG_DB_PORT=3306
-        - RAG_DB_USER=demo_user
-        - RAG_DB_PASS=demo_pass_123
-        - RAG_DB_NAME=demo_db
+        - RAG_DB_USER=dev
+        - RAG_DB_PASS=devpass
+        - RAG_DB_NAME=ai_agent_db
     depends_on:
       - mysql
     networks:
