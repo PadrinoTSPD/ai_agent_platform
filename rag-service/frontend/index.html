@@ -720,7 +720,7 @@
                     
                     setStatus('file-status', 'info', '正在上传到服务器...');
                     
-                    const response = await fetch(`${API_BASE_URL}/ingest`, {
+                    const response = await fetch(`${API_BASE_URL}/rag/ingest`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -809,7 +809,7 @@
                 
                 setStatus('text-status', 'info', '正在上传到服务器...');
                 
-                const response = await fetch(`${API_BASE_URL}/ingest`, {
+                const response = await fetch(`${API_BASE_URL}/rag/ingest`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -962,7 +962,7 @@
             try {
                 setStatus('search-status', 'info', '正在搜索...');
                 
-                let url = `${API_BASE_URL}/search?q=${encodeURIComponent(query)}&topK=${topK}&user=${encodeURIComponent(user)}`;
+                let url = `${API_BASE_URL}/rag/search?q=${encodeURIComponent(query)}&topK=${topK}&user=${encodeURIComponent(user)}`;
                 if (category) {
                     url += `&category=${encodeURIComponent(category)}`;
                 }
@@ -1003,7 +1003,7 @@
             try {
                 setStatus('hybrid-status', 'info', '正在混合搜索...');
                 
-                const response = await fetch(`${API_BASE_URL}/hybrid-search`, {
+                const response = await fetch(`${API_BASE_URL}/rag/hybrid-search`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1036,7 +1036,7 @@
             try {
                 setStatus('health-status', 'info', '正在检查服务状态...');
                 
-                const response = await fetch(`${API_BASE_URL}/health`);
+                const response = await fetch(`${API_BASE_URL}/rag/health`);
                 const result = await response.json();
                 
                 if (result.code === 0) {
@@ -1056,10 +1056,10 @@
                             <p><strong>服务地址:</strong> ${API_BASE_URL}</p>
                             <p><strong>API 端点:</strong></p>
                             <ul style="margin: 10px 0; padding-left: 20px; color: var(--text-secondary);">
-                                <li>/health - 健康检查</li>
-                                <li>/ingest - 文档导入</li>
-                                <li>/search - 向量搜索</li>
-                                <li>/hybrid-search - 混合搜索</li>
+                                <li>/rag/health - 健康检查</li>
+                                <li>/rag/ingest - 文档导入</li>
+                                <li>/rag/search - 向量搜索</li>
+                                <li>/rag/hybrid-search - 混合搜索</li>
                             </ul>
                             <p><strong>最后检查时间:</strong> ${new Date().toLocaleString('zh-CN')}</p>
                         </div>
