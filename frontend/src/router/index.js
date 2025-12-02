@@ -4,6 +4,7 @@ import RegisterView from '../views/RegisterView.vue'
 import HomeView from '../views/HomeView.vue'
 import AgentsView from '../views/AgentsView.vue'
 import AgentCreationView from '../views/AgentCreationView.vue'
+import AgentEditView from '../views/AgentEditView.vue'
 import PluginsView from '../views/PluginsView.vue'
 import WorkflowView from '../views/WorkflowView.vue'
 import KnowledgeView from '../views/KnowledgeView.vue'
@@ -73,6 +74,14 @@ const routes = [
     path: '/agents/creation',
     name: 'AgentCreation',
     component: AgentCreationView,
+    meta: {
+      requiresAuth: true // 需要登录才能访问
+    }
+  },
+  {
+    path: '/agents/:id/edit',
+    name: 'AgentEdit',
+    component: AgentEditView,
     meta: {
       requiresAuth: true // 需要登录才能访问
     }

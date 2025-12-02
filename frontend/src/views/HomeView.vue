@@ -64,7 +64,7 @@
             <div 
               v-for="agent in agents" 
               :key="agent.id" 
-              class="agent-avatar"
+              class="agent-card"
             >
               <div class="avatar-container">
                 <img 
@@ -74,10 +74,26 @@
                 />
                 <div class="agent-name">{{ agent.name }}</div>
               </div>
+              <div class="agent-actions">
+                <button 
+                  class="btn-action btn-update" 
+                  @click="handleUpdateAgent(agent)"
+                  title="更新智能体"
+                >
+                  更新
+                </button>
+                <button 
+                  class="btn-action btn-delete" 
+                  @click="handleDeleteAgent(agent)"
+                  title="删除智能体"
+                >
+                  删除
+                </button>
+              </div>
             </div>
             
             <!-- 添加智能体按钮 -->
-            <div class="agent-avatar add-agent" @click="showCreateModal = true">
+            <div class="agent-card add-agent" @click="showCreateModal = true">
               <div class="avatar-container">
                 <div class="add-icon">+</div>
                 <div class="agent-name">添加智能体</div>
@@ -127,7 +143,8 @@ export default {
       user: null,
       agents: [],
       showCreateModal: false,
-      newAgentName: ''
+      newAgentName: '',
+      deletingAgentId: null
     }
   },
   mounted() {
@@ -171,7 +188,8 @@ export default {
     async getAgentsList() {
       try {
         const response = await api.agent.getAgentList()
-        this.agents = response.data || []
+        // API返回格式: { agents: [...], pagination: {...} }
+        this.agents = response.agents || []
       } catch (error) {
         console.error('获取智能体列表失败:', error)
         this.agents = []
@@ -190,6 +208,34 @@ export default {
         // 重置表单
         this.newAgentName = ''
         this.showCreateModal = false
+      }
+    },
+    
+    // 处理更新智能体
+    handleUpdateAgent(agent) {
+      // 将智能体数据编码后通过query传递
+      this.$router.push({
+        path: `/agents/${agent.id}/edit`,
+        query: {
+          agentData: JSON.stringify(agent)
+        }
+      })
+    },
+    
+    // 处理删除智能体
+    async handleDeleteAgent(agent) {
+      if (confirm(`确定要删除智能体"${agent.name}"吗？此操作不可恢复。`)) {
+        this.deletingAgentId = agent.id
+        try {
+          await api.agent.deleteAgent(agent.id)
+          // 删除成功后刷新列表
+          await this.getAgentsList()
+        } catch (error) {
+          console.error('删除智能体失败:', error)
+          alert('删除智能体失败，请稍后重试')
+        } finally {
+          this.deletingAgentId = null
+        }
       }
     }
   }
@@ -373,23 +419,41 @@ export default {
   justify-items: center;
 }
 
-/* 智能体头像样式 */
-.agent-avatar {
-  cursor: pointer;
-  transition: transform 0.2s ease;
+/* 智能体卡片样式 */
+.agent-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
   width: 100%;
-  max-width: 120px;
-  text-align: center;
+  max-width: 150px;
 }
 
-.agent-avatar:hover {
+.agent-card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.agent-card.add-agent {
+  cursor: pointer;
+  border: 2px dashed #cbd5e0;
+}
+
+.agent-card.add-agent:hover {
+  border-color: #667eea;
+  background-color: #f7fafc;
 }
 
 .avatar-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  margin-bottom: 12px;
 }
 
 .avatar-img {
@@ -402,34 +466,66 @@ export default {
 }
 
 .add-agent .avatar-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 2px dashed #cbd5e0;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
-  transition: all 0.2s ease;
-}
-
-.add-agent:hover .avatar-container {
-  border-color: #667eea;
-  background-color: #f7fafc;
+  margin-bottom: 0;
 }
 
 .add-icon {
   font-size: 32px;
   color: #a0aec0;
   font-weight: 300;
+  margin-bottom: 8px;
 }
 
 .agent-name {
   font-size: 14px;
   color: #4a5568;
   font-weight: 500;
-  margin-top: 8px;
+  text-align: center;
   word-break: break-word;
+  line-height: 1.4;
+}
+
+/* 操作按钮样式 */
+.agent-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-update {
+  background-color: #667eea;
+  color: white;
+}
+
+.btn-update:hover {
+  background-color: #5a67d8;
+}
+
+.btn-delete {
+  background-color: #fc8181;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #f56565;
+}
+
+.btn-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* 弹窗样式 */

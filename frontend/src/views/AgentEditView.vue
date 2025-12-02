@@ -1,5 +1,5 @@
 <template>
-  <div class="agent-creation-container">
+  <div class="agent-edit-container">
     <!-- 导航栏 -->
     <header class="navbar">
       <div class="navbar-brand">
@@ -49,27 +49,26 @@
         </nav>
       </aside>
       
-      <!-- 智能体创建页面内容 -->
+      <!-- 智能体更新页面内容 -->
       <main class="content">
-        <div class="creation-section">
+        <div class="edit-section">
           <div class="form-header">
-            <h2>创建智能体</h2>
-            <p class="form-subtitle">填写智能体的基本信息，创建属于您的智能体</p>
+            <h2>更新智能体</h2>
+            <p class="form-subtitle">修改智能体的基本信息</p>
           </div>
 
           <form @submit.prevent="handleSubmit" class="agent-form">
-            <!-- 智能体名称（只读显示） -->
+            <!-- 智能体名称 -->
             <div class="form-group">
               <label class="form-label">智能体名称 <span class="required">*</span></label>
               <input
                 type="text"
                 v-model="formData.name"
                 class="form-input"
-                readonly
-                disabled
-                placeholder="智能体名称"
+                placeholder="请输入智能体名称"
+                required
               />
-              <p class="form-hint">此名称已在主页设置</p>
+              <p class="form-hint">智能体的显示名称</p>
             </div>
 
             <!-- 描述 -->
@@ -191,8 +190,8 @@
                 class="btn btn-primary"
                 :disabled="loading || !isFormValid"
               >
-                <span v-if="loading">创建中...</span>
-                <span v-else>创建智能体</span>
+                <span v-if="loading">更新中...</span>
+                <span v-else>更新智能体</span>
               </button>
             </div>
 
@@ -211,11 +210,11 @@
 import api from '../utils/api.js'
 
 export default {
-  name: 'AgentCreationView',
+  name: 'AgentEditView',
   data() {
     return {
       user: null,
-      agentName: '',
+      agentId: null,
       loading: false,
       errorMessage: '',
       formData: {
@@ -251,14 +250,36 @@ export default {
     // 检查登录状态
     this.checkLoginStatus()
     
-    // 获取URL参数中的智能体名称
-    const nameFromQuery = this.$route.query.name || ''
-    this.agentName = nameFromQuery
-    this.formData.name = nameFromQuery
+    // 从路由参数获取智能体ID和数据
+    this.agentId = this.$route.params.id
+    const agentDataStr = this.$route.query.agentData
     
-    // 如果没有名称，提示并返回
-    if (!nameFromQuery) {
-      this.errorMessage = '缺少智能体名称，请返回主页重新创建'
+    if (!this.agentId) {
+      this.errorMessage = '缺少智能体ID，请返回主页重新选择'
+      return
+    }
+    
+    if (agentDataStr) {
+      try {
+        const agentData = JSON.parse(agentDataStr)
+        // 填充表单数据
+        this.formData = {
+          name: agentData.name || '',
+          description: agentData.description || '',
+          systemPrompt: agentData.systemPrompt || '',
+          category: agentData.category || '',
+          model: agentData.model || '',
+          temperature: agentData.temperature !== undefined ? agentData.temperature : 0.7,
+          maxTokens: agentData.maxTokens !== undefined ? agentData.maxTokens : 4096,
+          avatar: agentData.avatar || '',
+          isPublic: agentData.isPublic !== undefined ? agentData.isPublic : false
+        }
+      } catch (error) {
+        console.error('解析智能体数据失败:', error)
+        this.errorMessage = '无法加载智能体数据，请返回主页重新选择'
+      }
+    } else {
+      this.errorMessage = '缺少智能体数据，请返回主页重新选择'
     }
   },
   methods: {
@@ -325,19 +346,14 @@ export default {
           isPublic: this.formData.isPublic || false
         }
         
-        // 调用创建智能体API
-        await api.agent.createAgent(requestData)
+        // 调用更新智能体API
+        await api.agent.updateAgent(this.agentId, requestData)
         
-        // 创建成功，跳转回主页
-        this.$router.push('/home').catch(err => {
-          // 如果路由跳转失败（比如已经跳转了），忽略错误
-          if (err.name !== 'NavigationDuplicated') {
-            console.error('跳转失败:', err)
-          }
-        })
+        // 更新成功，跳转到主页
+        this.$router.push('/home')
       } catch (error) {
-        console.error('创建智能体失败:', error)
-        this.errorMessage = error.message || '创建智能体失败，请稍后重试'
+        console.error('更新智能体失败:', error)
+        this.errorMessage = error.message || '更新智能体失败，请稍后重试'
       } finally {
         this.loading = false
       }
@@ -346,7 +362,7 @@ export default {
     // 处理取消
     handleCancel() {
       // 确认是否取消
-      if (confirm('确定要取消创建吗？未保存的信息将丢失。')) {
+      if (confirm('确定要取消更新吗？未保存的修改将丢失。')) {
         this.$router.push('/home')
       }
     }
@@ -355,7 +371,7 @@ export default {
 </script>
 
 <style scoped>
-.agent-creation-container {
+.agent-edit-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -485,8 +501,8 @@ export default {
   flex-direction: column;
 }
 
-/* 创建智能体区域样式 */
-.creation-section {
+/* 更新智能体区域样式 */
+.edit-section {
   background-color: white;
   border-radius: 12px;
   padding: 32px;
@@ -563,12 +579,6 @@ export default {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.form-input:disabled {
-  background-color: #f7fafc;
-  color: #718096;
-  cursor: not-allowed;
 }
 
 .form-textarea {
@@ -657,7 +667,7 @@ export default {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .creation-section {
+  .edit-section {
     padding: 24px;
   }
   
@@ -679,3 +689,4 @@ export default {
   }
 }
 </style>
+

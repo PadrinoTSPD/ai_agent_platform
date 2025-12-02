@@ -249,7 +249,7 @@ json
 端点: GET http://localhost:8080/api/conversation/get_conversation_list
 查询参数:
 - page, limit: 分页参数
-- agent_id (可选): 按智能体筛选  (这一部分还没有写)
+- agent_id (可选): 按智能体筛选 
 响应：
 {
     "code": 200,
