@@ -6,8 +6,8 @@ SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
 
 -- 创建数据库（指定字符集）
-CREATE DATABASE IF NOT EXISTS ai_agent_db 
-DEFAULT CHARACTER SET utf8mb4 
+CREATE DATABASE IF NOT EXISTS ai_agent_db
+DEFAULT CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
 USE ai_agent_db;
