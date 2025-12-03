@@ -10,7 +10,11 @@ export const agentAPI = {
    */
   async getAgentList(params = {}) {
     try {
-      const response = await get('/agent/get_agent_list?pageNum=1&limit=20', params)
+      const response = await get('/agent/get_agent_list', {
+        page: 1,
+        limit: 20,
+        ...params
+      })
       return response
     } catch (error) {
       console.error('获取智能体列表失败:', error)

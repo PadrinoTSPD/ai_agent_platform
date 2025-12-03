@@ -70,21 +70,22 @@
                 <img 
                   :src="agent.avatar || 'https://via.placeholder.com/100'" 
                   :alt="agent.name" 
-                  class="avatar-img"
+                  class="avatar-img hand"
+                  @click="handleAgentChat(agent)"
                 />
-                <div class="agent-name">{{ agent.name }}</div>
+                <div class="agent-name hand" @click="handleAgentChat(agent)">{{ agent.name }}</div>
               </div>
               <div class="agent-actions">
                 <button 
                   class="btn-action btn-update" 
-                  @click="handleUpdateAgent(agent)"
+                  @click.stop="handleUpdateAgent(agent)"
                   title="更新智能体"
                 >
                   更新
                 </button>
                 <button 
                   class="btn-action btn-delete" 
-                  @click="handleDeleteAgent(agent)"
+                  @click.stop="handleDeleteAgent(agent)"
                   title="删除智能体"
                 >
                   删除
@@ -186,6 +187,12 @@ export default {
     
     // 获取智能体列表
     async getAgentsList() {
+      // 新增：如果没有token，直接跳转登录
+      const token = this.$root.$options.api?.getAccessToken ? this.$root.$options.api.getAccessToken() : (this.$api?.getAccessToken?.() || localStorage.getItem('access_token'))
+      if (!token) {
+        this.$router.push('/login')
+        return
+      }
       try {
         const response = await api.agent.getAgentList()
         // API返回格式: { agents: [...], pagination: {...} }
@@ -237,6 +244,15 @@ export default {
           this.deletingAgentId = null
         }
       }
+    },
+
+    handleAgentChat(agent) {
+      this.$router.push({
+        path: '/agents',
+        query: {
+          agent_id: agent.id
+        }
+      });
     }
   }
 }
@@ -673,4 +689,5 @@ export default {
   cursor: not-allowed;
   opacity: 0.6;
 }
+.hand { cursor:pointer; }
 </style>

@@ -65,11 +65,25 @@ export async function fetchAPI(endpoint, options = {}) {
     headers
   }
 
+  // 增加调试日志
+  console.log('[fetchAPI 调试] URL:', url)
+  console.log('[fetchAPI 调试] Headers:', headers)
+  
   try {
     const response = await fetch(url, config)
 
     // 检查响应状态
     if (!response.ok) {
+      // 新增：若401/403自动登出跳转登录（仅非登录相关页面）
+      if ((response.status === 401 || response.status === 403) && typeof window !== 'undefined') {
+        removeAccessToken();
+        removeUserInfo && removeUserInfo();
+        // 确保不是在登录/注册页，避免死循环
+        const path = window.location.pathname
+        if (!/\/login|\/register/.test(path)) {
+          window.location.href = '/login';
+        }
+      }
       // 尝试解析错误响应
       let errorData
       try {
@@ -110,7 +124,8 @@ export async function get(endpoint, params = {}) {
     .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
     .join('&')
 
-  const url = queryString ? `${endpoint}?${queryString}` : endpoint
+  const separator = endpoint.includes('?') ? '&' : '?'
+  const url = queryString ? `${endpoint}${separator}${queryString}` : endpoint
 
   return fetchAPI(url, {
     method: 'GET'
@@ -169,16 +184,16 @@ export const authAPI = {
 
       // 保存token和用户信息
       if (response && response.access_token) {
-        setAccessToken(response.access_token)
+        await Promise.resolve(setAccessToken(response.access_token));
         // 保存用户信息（用户信息直接包含在response对象中）
-        saveUserInfo({
+        await Promise.resolve(saveUserInfo({
           id: response.id,
           username: response.username,
           nickname: response.nickname,
           email: response.email,
           avatar: response.avatar,
           lastLoginTime: response.lastLoginTime
-        })
+        }));
       }
 
       return response
