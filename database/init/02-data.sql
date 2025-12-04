@@ -8,8 +8,8 @@ INSERT INTO `user` (`id`, `username`, `password`, `nickname`, `email`, `phone`, 
 
 -- 插入测试Agent
 INSERT INTO `agent` (`id`, `name`, `description`, `avatar`, `category`, `model`, `system_prompt`, `temperature`, `max_tokens`, `is_public`, `creator_id`, `created_at`, `updated_at`) VALUES
-(1, 'test_agent1', 'This is test_agent1\'s description', 'https://example.com/avatar.jpg', 'test_agent1_category', 'test_agent1_model', 'This is test_agent1\'s system prompt', 0.80, 2048, 1, 1, '2025-11-20 15:45:52', '2025-11-20 18:30:59'),
-(2, 'test_agent2', 'This is test_agent2\'s description', 'https://example.com/avatar.jpg', 'test_agent2_category', 'test_agent2_model', 'This is test_agent2\'s system prompt', 0.75, 4096, 1, 1, '2025-11-20 15:48:03', '2025-11-20 15:48:03');
+(1, 'test_agent1', 'This is test_agent1\'s description', 'https://example.com/avatar.jpg', 'test_agent1_category', 'test_agent1_model', 'This is test_agent1\'s system prompt', 0.80, 2048, 1, 2, '2025-11-20 15:45:52', '2025-11-20 18:30:59'),
+(2, 'test_agent2', 'This is test_agent2\'s description', 'https://example.com/avatar.jpg', 'test_agent2_category', 'test_agent2_model', 'This is test_agent2\'s system prompt', 0.75, 4096, 1, 2, '2025-11-20 15:48:03', '2025-11-20 15:48:03');
 
 -- 插入测试会话
 INSERT INTO `conversation` (`id`, `agent_id`, `title`, `metadata`, `created_at`, `updated_at`) VALUES
