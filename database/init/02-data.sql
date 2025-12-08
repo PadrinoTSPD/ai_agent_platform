@@ -25,15 +25,15 @@ INSERT INTO `agent_conversation` (`id`, `agent_id`, `conversation_id`, `created_
 (2, 2, 2, '2025-11-21 16:03:33');
 
 -- 插入测试消息
-INSERT INTO `message` (`id`, `conversation_id`, `role`, `content`, `type`, `metadata`, `created_at`, `updated_at`) VALUES
-(1, 1, 'user', '你好！', 'text', '{\"attachments\": [\"file_id_1\", \"file_id_2\"]}', '2025-11-21 17:46:43', '2025-11-21 17:46:43'),
-(2, 1, 'assistant', '您好！我是智能助手，很高兴为您服务。', 'text', NULL, '2025-11-21 17:46:43', '2025-11-21 17:46:43'),
-(3, 1, 'user', '今天是星期几？', 'text', '{\"attachments\": [\"file_id_1\", \"file_id_2\"]}', '2025-11-21 17:52:48', '2025-11-21 17:52:48'),
-(4, 1, 'assistant', '今天是星期三。', 'text', NULL, '2025-11-21 17:52:48', '2025-11-21 17:52:48'),
-(5, 1, 'user', '今天天气怎么样？', 'text', '{\"attachments\": [\"file_id_1\", \"file_id_2\"]}', '2025-11-21 17:55:43', '2025-11-21 17:55:43'),
-(6, 1, 'assistant', '今天天气晴。', 'text', NULL, '2025-11-21 17:55:43', '2025-11-21 17:55:43'),
-(7, 1, 'user', '距离放假还有多久？', 'text', '{\"attachments\": [\"file_id_1\", \"file_id_2\"]}', '2025-11-21 18:00:50', '2025-11-21 18:00:50'),
-(8, 1, 'assistant', '距离放假还有很久。', 'text', NULL, '2025-11-21 18:00:50', '2025-11-21 18:00:50');
+INSERT INTO `message` (`id`, `conversation_id`, `role`, `content`, `type`, `metadata`, `created_at`) VALUES
+(1, 1, 'user', '你好！', 'text', '{\"attachments\": [\"file_id_1\", \"file_id_2\"]}', '2025-11-21 17:46:43'),
+(2, 1, 'assistant', '您好！我是智能助手，很高兴为您服务。', 'text', NULL, '2025-11-21 17:46:43'),
+(3, 1, 'user', '今天是星期几？', 'text', '{\"attachments\": [\"file_id_1\", \"file_id_2\"]}', '2025-11-21 17:52:48'),
+(4, 1, 'assistant', '今天是星期三。', 'text', NULL, '2025-11-21 17:52:48'),
+(5, 1, 'user', '今天天气怎么样？', 'text', '{\"attachments\": [\"file_id_1\", \"file_id_2\"]}', '2025-11-21 17:55:43'),
+(6, 1, 'assistant', '今天天气晴。', 'text', NULL, '2025-11-21 17:55:43'),
+(7, 1, 'user', '距离放假还有多久？', 'text', '{\"attachments\": [\"file_id_1\", \"file_id_2\"]}', '2025-11-21 18:00:50'),
+(8, 1, 'assistant', '距离放假还有很久。', 'text', NULL, '2025-11-21 18:00:50');
 
 -- 插入测试数据
 INSERT INTO knowledge (title, user, content, category, keywords, source) VALUES
