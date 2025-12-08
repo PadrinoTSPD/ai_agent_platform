@@ -5,7 +5,7 @@ module.exports = async function rootRoute(fastify) {
       response: {
         200: {
           allOf: [
-            { $ref: 'ResponseSuccess#' },
+            { $ref: 'ResponseBase#' },
             {
               type: 'object',
               properties: {

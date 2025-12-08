@@ -7,41 +7,25 @@
     },
     "components": {
         "schemas": {
-            "ResponseSuccess": {
+            "ResponseBase": {
                 "type": "object",
                 "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "enum": [
-                            true
-                        ]
+                    "code": {
+                        "type": "integer"
                     },
-                    "data": {}
-                },
-                "required": [
-                    "success"
-                ]
-            },
-            "ResponseError": {
-                "type": "object",
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "enum": [
-                            false
-                        ]
+                    "message": {
+                        "type": "string"
                     },
-                    "error": {
-                        "type": "object",
-                        "properties": {
-                            "message": {
-                                "type": "string"
-                            }
-                        }
+                    "data": {},
+                    "timestamp": {
+                        "type": "integer"
                     }
                 },
                 "required": [
-                    "success"
+                    "code",
+                    "message",
+                    "data",
+                    "timestamp"
                 ]
             }
         }
@@ -58,7 +42,7 @@
                                 "schema": {
                                     "allOf": [
                                         {
-                                            "$ref": "#/components/schemas/ResponseSuccess"
+                                            "$ref": "#/components/schemas/ResponseBase"
                                         },
                                         {
                                             "type": "object",
@@ -158,7 +142,7 @@
                                 "schema": {
                                     "allOf": [
                                         {
-                                            "$ref": "#/components/schemas/ResponseSuccess"
+                                            "$ref": "#/components/schemas/ResponseBase"
                                         },
                                         {
                                             "type": "object",
@@ -186,7 +170,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ResponseError"
+                                    "$ref": "#/components/schemas/ResponseBase"
                                 }
                             }
                         }
@@ -196,7 +180,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ResponseError"
+                                    "$ref": "#/components/schemas/ResponseBase"
                                 }
                             }
                         }
@@ -206,7 +190,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ResponseError"
+                                    "$ref": "#/components/schemas/ResponseBase"
                                 }
                             }
                         }
@@ -324,7 +308,7 @@
                                 "schema": {
                                     "allOf": [
                                         {
-                                            "$ref": "#/components/schemas/ResponseSuccess"
+                                            "$ref": "#/components/schemas/ResponseBase"
                                         },
                                         {
                                             "type": "object",
@@ -350,7 +334,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ResponseError"
+                                    "$ref": "#/components/schemas/ResponseBase"
                                 }
                             }
                         }
@@ -360,7 +344,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ResponseError"
+                                    "$ref": "#/components/schemas/ResponseBase"
                                 }
                             }
                         }

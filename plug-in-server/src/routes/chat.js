@@ -1,6 +1,6 @@
 module.exports = async function chatRoute(fastify, opts) {
-  const routePath = (opts && opts.routePath) || '/chat';
-  const swaggerTags = (opts && opts.swaggerTags) || ['openai'];
+  const routePath = (opts && opts.routePath) || '/message/send';
+  const swaggerTags = (opts && opts.swaggerTags) || ['messages'];
   const summarize = (opts && opts.summary) || 'Chat with OpenAI-compatible model';
 
   fastify.route({
@@ -11,8 +11,11 @@ module.exports = async function chatRoute(fastify, opts) {
       summary: summarize,
       body: {
         type: 'object',
-        required: ['messages'],
+        required: ['conversationId', 'userId', 'agentId', 'messages'],
         properties: {
+          conversationId: { type: 'integer', minimum: 1 },
+          userId: { type: 'integer', minimum: 1 },
+          agentId: { type: 'integer', minimum: 1 },
           messages: {
             type: 'array',
             minItems: 1,
@@ -34,7 +37,7 @@ module.exports = async function chatRoute(fastify, opts) {
       response: {
         200: {
           allOf: [
-            { $ref: 'ResponseSuccess#' },
+            { $ref: 'ResponseBase#' },
             {
               type: 'object',
               properties: {
@@ -49,13 +52,30 @@ module.exports = async function chatRoute(fastify, opts) {
             }
           ]
         },
-        400: { $ref: 'ResponseError#' },
-        502: { $ref: 'ResponseError#' },
-        503: { $ref: 'ResponseError#' }
+        400: { $ref: 'ResponseBase#' },
+        502: { $ref: 'ResponseBase#' },
+        503: { $ref: 'ResponseBase#' }
       }
     },
     handler: async (request, reply) => {
-      const { messages, provider, model, temperature, maxTokens } = request.body || {};
+      const { conversationId, userId, agentId, messages, provider, model, temperature, maxTokens } =
+        request.body || {};
+
+      const normalizedConversationId = Number(conversationId);
+      const normalizedUserId = Number(userId);
+      const normalizedAgentId = Number(agentId);
+
+      if (!Number.isInteger(normalizedConversationId) || normalizedConversationId <= 0) {
+        return reply.sendError('conversationId must be a positive integer', 400);
+      }
+
+      if (!Number.isInteger(normalizedUserId) || normalizedUserId <= 0) {
+        return reply.sendError('userId must be a positive integer', 400);
+      }
+
+      if (!Number.isInteger(normalizedAgentId) || normalizedAgentId <= 0) {
+        return reply.sendError('agentId must be a positive integer', 400);
+      }
 
       if (!Array.isArray(messages) || messages.length === 0) {
         return reply.sendError('messages must be a non-empty array', 400);
