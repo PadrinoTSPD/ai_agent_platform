@@ -110,20 +110,34 @@ CREATE TABLE IF NOT EXISTS `agent` (
 CREATE TABLE IF NOT EXISTS `conversation` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '会话ID',
   `creator_id` BIGINT NOT NULL COMMENT '创建者用户ID',
-  `agent_id` BIGINT NOT NULL COMMENT '对应的智能体id',
   `title` VARCHAR(255) DEFAULT NULL COMMENT '会话标题',
   `metadata` JSON DEFAULT NULL COMMENT '元数据',
+  `provider` VARCHAR(100) DEFAULT NULL COMMENT '模型提供方',
+  `model` VARCHAR(150) DEFAULT NULL COMMENT '模型名称',
+  `temperature` DECIMAL(3,2) DEFAULT NULL COMMENT '模型推理温度',
+  `max_tokens` INT DEFAULT NULL COMMENT '模型最大响应tokens数',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   INDEX `idx_creator_id` (`creator_id`),
-  INDEX `idx_agent_id` (`agent_id`),
   INDEX `idx_title` (`title`),
-  CONSTRAINT `fk_conversation_creator` FOREIGN KEY (`creator_id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_conversation_agent` FOREIGN KEY (`agent_id`) REFERENCES `agent`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_conversation_creator` FOREIGN KEY (`creator_id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会话表';
 
--- 8. 消息表
+-- 8. 智能体与会话关联表
+CREATE TABLE IF NOT EXISTS `agent_conversation` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `agent_id` BIGINT NOT NULL COMMENT '智能体ID',
+  `conversation_id` BIGINT NOT NULL COMMENT '会话ID',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_agent_conversation` (`agent_id`, `conversation_id`),
+  INDEX `idx_ac_conversation` (`conversation_id`),
+  CONSTRAINT `fk_ac_agent` FOREIGN KEY (`agent_id`) REFERENCES `agent`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_ac_conversation` FOREIGN KEY (`conversation_id`) REFERENCES `conversation`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='智能体与会话关联表';
+
+-- 9. 消息表
 CREATE TABLE IF NOT EXISTS `message` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '消息ID',
   `conversation_id` BIGINT NOT NULL COMMENT '所属会话ID',
@@ -139,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `message` (
   CONSTRAINT `fk_message_conversation` FOREIGN KEY (`conversation_id`) REFERENCES `conversation`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='消息表';
 
--- 9. 用户知识库
+-- 10. 用户知识库
 CREATE TABLE IF NOT EXISTS knowledge (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL COMMENT '知识标题',
