@@ -133,7 +133,7 @@ module.exports = async function mcpRoute(fastify, opts = {}) {
       response: {
         200: {
           allOf: [
-            { $ref: 'ResponseSuccess#' },
+            { $ref: 'ResponseBase#' },
             {
               type: 'object',
               properties: {
@@ -148,8 +148,8 @@ module.exports = async function mcpRoute(fastify, opts = {}) {
             }
           ]
         },
-        400: { $ref: 'ResponseError#' },
-        502: { $ref: 'ResponseError#' }
+        400: { $ref: 'ResponseBase#' },
+        502: { $ref: 'ResponseBase#' }
       }
     },
     handler: async (request, reply) => {
