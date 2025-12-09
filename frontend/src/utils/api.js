@@ -3,6 +3,7 @@ import { authAPI, getAccessToken, setAccessToken, removeAccessToken, saveUserInf
 import { agentAPI } from './agent.js'
 import { conversationAPI } from './conversation.js'
 import { pluginAPI } from './plugin.js'
+import { knowledgeAPI } from './knowledge.js'
 
 // 创建默认导出对象，保持向后兼容
 const api = {
@@ -10,6 +11,7 @@ const api = {
   agent: agentAPI,
   conversation: conversationAPI,
   plugin: pluginAPI,
+  knowledge: knowledgeAPI,
   getAccessToken,
   setAccessToken,
   removeAccessToken,
@@ -39,5 +41,8 @@ export {
   conversationAPI,
   
   // 插件相关
-  pluginAPI
+  pluginAPI,
+  
+  // 知识库相关
+  knowledgeAPI
 }

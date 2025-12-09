@@ -184,7 +184,26 @@ export default {
           page: 1,
           limit: 100
         })
-        this.messageHistory = response.history || []
+
+        // 调试：打印后端返回的原始响应，便于排查不同后端返回格式
+        console.debug('[loadMessageHistory] response:', response)
+
+        // 兼容多种可能的返回结构：
+        // 1) { history: [...] }
+        // 2) { data: { history: [...] } }
+        // 3) directly an array: [...] (某些实现可能直接返回数组)
+        let history = []
+        if (Array.isArray(response)) {
+          history = response
+        } else if (response && Array.isArray(response.history)) {
+          history = response.history
+        } else if (response && response.data && Array.isArray(response.data.history)) {
+          history = response.data.history
+        } else if (response && Array.isArray(response.data)) {
+          history = response.data
+        }
+
+        this.messageHistory = history || []
         // 滚动到底部
         this.$nextTick(() => {
           this.scrollToBottom()

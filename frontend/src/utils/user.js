@@ -103,8 +103,10 @@ export async function fetchAPI(endpoint, options = {}) {
     // 解析JSON响应
     const data = await response.json()
 
-    // 根据后端实际返回的状态码调整，成功状态码为200
-    if (data.code !== 200) {
+    // 根据后端实际返回的状态码调整
+    // 本项目后端统一返回格式: { code: 0, message: '', data: ... }
+    // 兼容历史或其它实现也可能返回 HTTP-style code 200
+    if (data.code !== 0 && data.code !== 200) {
       throw new Error(data.message || 'API返回错误')
     }
 

@@ -1,27 +1,3 @@
-1. 项目系统环境
-本地JDK：JDK-24
-云服务器部署：eclipse-temurin:21-jre（暂定）
-https://github.com/HuxJiang/internet_dev#
-项目仓库链接：git@github.com:HuxJiang/internet_dev.git；
-2. 数据库设计
-2.1 数据库表设计
-用户表user、知识库表knowledge、角色表role、权限表permission、用户角色关联表user_role、角色权限关联表role_permission、智能体表agent、工作流表workflow、文档表document、插件表plugin、聊天会话表chat_session、聊天信息表chat_message
-目前先定义的表：用户表user、角色表role、权限表permission、用户角色关联表user_role、角色权限关联表role_permission、智能体表agent、会话表conversation、消息表message
-
-3. 前端页面设计
-登录页            /login
-注册页            /register
-主页                /home
-用户页            /user/{username}
-插件页            /plugins
-知识库页        /knowledge
-工作流设计页 /workflow
-智能体管理页 /agents
-
-路由规则
-未携带token  统一重定向到 /login
-
-
 4. 接口设计
 基础信息
 
@@ -32,15 +8,8 @@ Authorization: Bearer {access_token}
 通用响应格式
 json
 {"code": 200,"message": "success","data": {},"timestamp": 1640995200000}
-错误码说明:
-错误码	说明
-200	成功
-400	请求参数错误
-401	未授权
-403	权限不足
-404	资源不存在
-500	服务器内部错误
-999	系统错误
+错误码说明
+暂时无法在飞书文档外展示此内容
 
 用户认证模块
 4.1 用户登录（该接口已写好）
@@ -249,7 +218,7 @@ json
 端点: GET http://localhost:8080/api/conversation/get_conversation_list
 查询参数:
 - page, limit: 分页参数
-- agent_id (可选): 按智能体筛选 
+- agent_id (可选): 按智能体筛选(这一部分还没有写)
 响应：
 {
     "code": 200,
@@ -423,6 +392,199 @@ json
 端点: GET /files/{file_id}
 
 ---
+插件管理模块
+4.17 获取插件列表
+端点: GET /api/plugin/list
+查询参数:
+- page (可选): 页码，默认1
+- limit (可选): 每页数量，默认20
+- type (可选): 筛选类型，all/my/system
+- search (可选): 搜索关键词
+响应:
+{
+  "code": 200,
+  "message": "获取插件列表成功",
+  "data": {
+    "plugins": [
+      {
+        "id": 1,
+        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "天气查询服务",
+        "description": "提供天气查询功能的API服务",
+        "is_active": 1,
+        "is_system": 0,
+        "user_id": 5,
+        "created_at": "2025-01-20T10:00:00",
+        "updated_at": "2025-01-20T10:00:00"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 10,
+      "pages": 1
+    }
+  },
+  "timestamp": 1640995200000
+}
+4.18 创建插件
+端点: POST /api/plugin/create
+请求体: multipart/form-data
+- name: 插件名称（必填）
+- description: 插件描述（可选）
+- openapi_file: OpenAPI规范JSON文件（必填）
+响应:
+{
+  "code": 200,
+  "message": "创建插件成功",
+  "data": {
+    "id": 1,
+    "uuid": "550e8400-e29b-41d4-a716-446655440000"
+  },
+  "timestamp": 1640995200000
+}
+4.19  获取插件详情
+端点: GET /api/plugin/{pluginId}
+响应:
+{
+  "code": 200,
+  "message": "获取插件详情成功",
+  "data": {
+    "id": 1,
+    "uuid": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "天气查询服务",
+    "description": "提供天气查询功能的API服务",
+    "openapi_spec": {...},
+    "is_active": 1,
+    "is_system": 0,
+    "user_id": 5,
+    "created_at": "2025-01-20T10:00:00",
+    "updated_at": "2025-01-20T10:00:00"
+  },
+  "timestamp": 1640995200000
+}
+4.20  更新插件
+端点: PUT /api/plugin/{pluginId}
+请求体: multipart/form-data
+- name: 插件名称（可选）
+- description: 插件描述（可选）
+- openapi_file: OpenAPI规范JSON文件（可选）
+- is_active: 是否激活（可选，0或1）
+响应:
+{
+  "code": 200,
+  "message": "更新插件成功",
+  "timestamp": 1640995200000
+}
+4.21  删除插件
+端点: DELETE /api/plugin/{pluginId}
+响应:
+{
+  "code": 200,
+  "message": "删除插件成功",
+  "timestamp": 1640995200000
+}
+插件与智能体关联API
+4.22  获取插件的智能体关联列表
+端点: GET /api/plugin/{pluginId}/agents
+响应:
+{
+  "code": 200,
+  "message": "获取关联列表成功",
+  "data": {
+    "associations": [
+      {
+        "id": 1,
+        "agent_id": 5,
+        "agent_name": "智能助手",
+        "plugin_id": 1,
+        "is_enabled": 1,
+        "priority": 0,
+        "created_at": "2025-01-20T10:00:00"
+      }
+    ]
+  },
+  "timestamp": 1640995200000
+}
+4.23 创建插件与智能体关联
+端点: POST /api/plugin/{pluginId}/agent
+请求体:
+{
+  "agent_id": 5,
+  "is_enabled": 1,
+  "priority": 0
+}
+响应:
+{
+  "code": 200,
+  "message": "创建关联成功",
+  "data": {
+    "id": 1
+  },
+  "timestamp": 1640995200000
+}
+4.24 更新插件与智能体关联
+端点: PUT /api/plugin/{pluginId}/agent/{associationId}
+请求体:
+{
+  "is_enabled": 1,
+  "priority": 5
+}
+响应:
+{
+  "code": 200,
+  "message": "更新关联成功",
+  "timestamp": 1640995200000
+}
+4.25  删除插件与智能体关联
+端点: DELETE /api/plugin/{pluginId}/agent/{associationId}
+响应:
+{
+  "code": 200,
+  "message": "删除关联成功",
+  "timestamp": 1640995200000
+}
+4.26  获取智能体的插件关联列表
+端点: GET /api/agent/{agentId}/plugins
+响应:
+{
+  "code": 200,
+  "message": "获取关联列表成功",
+  "data": {
+    "associations": [
+      {
+        "id": 1,
+        "agent_id": 5,
+        "plugin_id": 1,
+        "plugin_name": "天气查询服务",
+        "plugin_uuid": "550e8400-e29b-41d4-a716-446655440000",
+        "is_enabled": 1,
+        "priority": 0,
+        "created_at": "2025-01-20T10:00:00"
+      }
+    ]
+  },
+  "timestamp": 1640995200000
+}
+4.27  为智能体添加插件关联
+端点: POST /api/agent/{agentId}/plugin
+请求体:
+{
+  "plugin_id": 1,
+  "is_enabled": 1,
+  "priority": 0
+}
+响应:
+{
+  "code": 200,
+  "message": "创建关联成功",
+  "data": {
+    "id": 1
+  },
+  "timestamp": 1640995200000
+}
+
+
 系统状态模块
 4.17 健康检查
 端点: GET /health
@@ -449,5 +611,3 @@ json
 认证失败
 json
 {"code": 401,"message": "认证失败，请重新登录","data": null,"timestamp": 1640995200000}
-
-
