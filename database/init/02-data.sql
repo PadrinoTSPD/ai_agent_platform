@@ -1,3 +1,6 @@
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
 -- 身体健康Agent平台示例数据
 USE ai_agent_db;
 
