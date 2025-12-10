@@ -60,9 +60,9 @@ export const knowledgeAPI = {
   /**
    * 根据标题删除
    */
-  async deleteByTitle(title) {
+  async deleteByTitle(data) {
     try {
-      const response = await post('/rag/delete-by-title', { title })
+      const response = await post('/rag/delete-by-title', data)
       return response
     } catch (error) {
       console.error('根据标题删除失败:', error)
@@ -73,9 +73,9 @@ export const knowledgeAPI = {
   /**
    * 根据类别删除
    */
-  async deleteByCategory(category) {
+  async deleteByCategory(data) {
     try {
-      const response = await post('/rag/delete-by-category', { category })
+      const response = await post('/rag/delete-by-category', data)
       return response
     } catch (error) {
       console.error('根据类别删除失败:', error)

@@ -217,7 +217,8 @@ export default {
       searchForm: {
         q: '',
         topK: 5,
-        category: ''
+        category: '',
+        user: ''
       },
       
       // 混合检索表单
@@ -226,17 +227,20 @@ export default {
         topK: 5,
         category: '',
         alpha: 0.7,
-        beta: 0.3
+        beta: 0.3,
+        user: ''
       },
       
       // 根据标题删除表单
       deleteByTitleForm: {
-        title: ''
+        title: '',
+        user: ''
       },
       
       // 根据类别删除表单
       deleteByCategoryForm: {
-        category: ''
+        category: '',
+        user: ''
       },
       
       // 检索结果
@@ -257,6 +261,10 @@ export default {
       if (this.user) {
         this.rawImportForm.user = this.user.username || this.user.email
         this.dbSyncForm.user = this.user.username || this.user.email
+        this.searchForm.user = this.user.username || this.user.email
+        this.hybridSearchForm.user = this.user.username || this.user.email
+        this.deleteByTitleForm.user = this.user.username || this.user.email
+        this.deleteByCategoryForm.user = this.user.username || this.user.email
       }
     },
     
@@ -351,6 +359,9 @@ export default {
           return
         }
         
+        // 获取用户信息并设置表单user字段
+        this.getUserInfo()
+        
         // 调用API
         const response = await api.knowledge.search(this.searchForm)
         this.searchResults = response.data || []
@@ -368,6 +379,9 @@ export default {
           alert('请填写查询文本')
           return
         }
+        
+        // 获取用户信息并设置表单user字段
+        this.getUserInfo()
         
         // 调用API
         const response = await api.knowledge.hybridSearch(this.hybridSearchForm)
@@ -392,8 +406,11 @@ export default {
           return
         }
         
+        // 获取用户信息并设置表单user字段
+        this.getUserInfo()
+        
         // 调用API
-        const response = await api.knowledge.deleteByTitle(this.deleteByTitleForm.title)
+        const response = await api.knowledge.deleteByTitle(this.deleteByTitleForm)
         alert('文档删除成功')
         
         // 清空表单
@@ -418,8 +435,11 @@ export default {
           return
         }
         
+        // 获取用户信息并设置表单user字段
+        this.getUserInfo()
+        
         // 调用API
-        const response = await api.knowledge.deleteByCategory(this.deleteByCategoryForm.category)
+        const response = await api.knowledge.deleteByCategory(this.deleteByCategoryForm)
         alert('文档删除成功')
         
         // 清空表单
